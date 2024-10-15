@@ -32,11 +32,11 @@ fi
 
 airflow connections delete 'aws_default' || true
 
-airflow connections add 'aws_default' \
-    --conn-type 'aws' \
+# airflow connections add 'aws_default' \
+#     --conn-type 'aws' \
     # --conn-login "${AWS_ACCESS_KEY_ID}" \
     # --conn-password "${AWS_SECRET_ACCESS_KEY}" \
-    --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
+    # --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
 
 refresh_dags &
 
