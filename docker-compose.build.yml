@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/airflow-image:latest
