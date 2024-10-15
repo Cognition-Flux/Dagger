@@ -13,7 +13,7 @@ refresh_dags() {
         echo "Reserializing DAGs..."
         airflow dags reserialize
         echo "Sleeping..."
-        sleep 600  # Sleep
+        sleep 300  # Sleep
     done
 }
 aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
