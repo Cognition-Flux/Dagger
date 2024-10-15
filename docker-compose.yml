@@ -16,9 +16,6 @@ services:
       - AIRFLOW_USER_FIRSTNAME=Admin
       - AIRFLOW_USER_LASTNAME=User
       - AIRFLOW_USER_ROLE=Admin
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_DEFAULT_REGION=us-east-1
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 10s
