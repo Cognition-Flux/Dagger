@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "airflow-docker-container"
+version = "0.1.0"
+description = "Airflow project with DAGs from S3"
+authors = ["alejandroacevedo2305 <a.acevedo.aracena@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.9.*"
+pycurl = "*"
+argcomplete = "*"
+apache-airflow = { version = "2.10.2", extras = ["statsd", "celery"] }
+apache-airflow-providers-http = "*"
+apache-airflow-providers-amazon = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

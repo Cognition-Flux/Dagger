@@ -1,0 +1,26 @@
+services:
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: airflow-image
+    container_name: airflow-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW_USER_USERNAME=admin
+      - AIRFLOW_USER_PASSWORD=admin
+      - AIRFLOW_USER_EMAIL=admin@example.com
+      - AIRFLOW_USER_FIRSTNAME=Admin
+      - AIRFLOW_USER_LASTNAME=User
+      - AIRFLOW_USER_ROLE=Admin
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=us-east-1
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
