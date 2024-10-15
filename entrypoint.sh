@@ -20,6 +20,9 @@ aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
 
 airflow db init
 
+airflow dags reserialize
+
+
 if ! airflow users list | grep -q "${AIRFLOW_USER_USERNAME:-admin}"; then
     airflow users create \
         --username "${AIRFLOW_USER_USERNAME}" \
