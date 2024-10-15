@@ -17,12 +17,10 @@ RUN python3 -m pip install pipx && \
     python3 -m pipx ensurepath && \
     pipx install poetry 
 
-# Copy Poetry files
 COPY pyproject.toml poetry.lock /opt/airflow/
 
 WORKDIR /opt/airflow
 
-# Install dependencies with Poetry
 RUN poetry config virtualenvs.create false && \
     poetry install --no-interaction --no-ansi
 
