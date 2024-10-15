@@ -13,7 +13,7 @@ refresh_dags() {
         echo "Reserializing DAGs..."
         airflow dags reserialize
         echo "Sleeping..."
-        sleep 10  # Sleep
+        sleep 600  # Sleep
     done
 }
 aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
@@ -32,11 +32,11 @@ fi
 
 airflow connections delete 'aws_default' || true
 
-# airflow connections add 'aws_default' \
-#     --conn-type 'aws' \
-    # --conn-login "${AWS_ACCESS_KEY_ID}" \
-    # --conn-password "${AWS_SECRET_ACCESS_KEY}" \
-    # --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
+airflow connections add 'aws_default' \
+    --conn-type 'aws' \
+    --conn-login "${AWS_ACCESS_KEY_ID:-none}" \
+    --conn-password "${AWS_SECRET_ACCESS_KEY:-none}" \
+    --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
 
 refresh_dags &
 
