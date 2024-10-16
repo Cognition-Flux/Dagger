@@ -9,7 +9,6 @@ configure_aws_and_conn() {
     aws configure set default.region "${AWS_DEFAULT_REGION:-us-east-1}"
 
     echo "Adding aws_default connection in Airflow with provided credentials..."
-    airflow connections delete 'aws_default' || true
     airflow connections add 'aws_default' \
         --conn-type 'aws' \
         --conn-login "${AWS_ACCESS_KEY_ID}" \
@@ -41,9 +40,16 @@ if ! airflow users list | grep -q "${AIRFLOW_USER_USERNAME:-admin}"; then
         --password "${AIRFLOW_USER_PASSWORD}"
 fi
 
-if [ "${RUNNING_IN_AWS_ECS}" = "False" ]; then
+airflow connections delete 'aws_default' || true
+
+if [ "${RUNNING_IN_AWS_ECS,,}" = "false" ]; then
     configure_aws_and_conn
+else
+    airflow connections add 'aws_default' \
+    --conn-type 'aws' \
+    --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
 fi
+
 
 sync_refresh_dags &
 
