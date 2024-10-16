@@ -2,26 +2,34 @@
 
 set -e
 
-# aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-# aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-# aws configure set default.region ${AWS_DEFAULT_REGION}
+configure_aws_and_conn() {
+    echo "Configuring AWS CLI with provided credentials..."
+    aws configure set aws_access_key_id "${AWS_ACCESS_KEY_ID}"
+    aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"
+    aws configure set default.region "${AWS_DEFAULT_REGION:-us-east-1}"
 
-refresh_dags() {
+    echo "Adding aws_default connection in Airflow with provided credentials..."
+    airflow connections delete 'aws_default' || true
+    airflow connections add 'aws_default' \
+        --conn-type 'aws' \
+        --conn-login "${AWS_ACCESS_KEY_ID}" \
+        --conn-password "${AWS_SECRET_ACCESS_KEY}" \
+        --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
+}
+
+
+sync_refresh_dags() {
     while true; do
         echo "Syncing DAGs from S3..."
         aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
         echo "Reserializing DAGs..."
         airflow dags reserialize
         echo "Sleeping..."
-        sleep 300  # Sleep
+        sleep 120  # Sleep
     done
 }
-aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
 
 airflow db init
-
-airflow dags reserialize
-
 
 if ! airflow users list | grep -q "${AIRFLOW_USER_USERNAME:-admin}"; then
     airflow users create \
@@ -33,15 +41,11 @@ if ! airflow users list | grep -q "${AIRFLOW_USER_USERNAME:-admin}"; then
         --password "${AIRFLOW_USER_PASSWORD}"
 fi
 
-airflow connections delete 'aws_default' || true
+if [ "${RUNNING_IN_AWS_ECS}" = "False" ]; then
+    configure_aws_and_conn
+fi
 
-airflow connections add 'aws_default' \
-    --conn-type 'aws' \
-    --conn-login "${AWS_ACCESS_KEY_ID:-none}" \
-    --conn-password "${AWS_SECRET_ACCESS_KEY:-none}" \
-    --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
-
-refresh_dags &
+sync_refresh_dags &
 
 airflow scheduler &
 

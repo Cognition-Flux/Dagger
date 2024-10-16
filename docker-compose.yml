@@ -7,8 +7,11 @@ services:
     container_name: airflow-dev
     ports:
       - "8080:8080"
+    volumes:
+      - ~/.aws/:/opt/airflow/.aws/
     environment:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
       - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
       - AIRFLOW_USER_USERNAME=admin
       - AIRFLOW_USER_PASSWORD=admin
@@ -16,6 +19,10 @@ services:
       - AIRFLOW_USER_FIRSTNAME=Admin
       - AIRFLOW_USER_LASTNAME=User
       - AIRFLOW_USER_ROLE=Admin
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=us-east-1
+      - RUNNING_IN_AWS_ECS=False
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 10s
