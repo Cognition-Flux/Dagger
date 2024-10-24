@@ -21,12 +21,11 @@ sync_refresh_dags() {
     while true; do
         echo "Syncing DAGs from S3..."
         aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
+        sleep 10  
         echo "Reserializing DAGs..."
         airflow dags reserialize
         echo "Sleeping..."
-        sleep 10  # Sleep
-        airflow db reset --yes
-        sleep 10  # Sleep
+        sleep 10  
         airflow db migrate
     done
 }
