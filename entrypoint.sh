@@ -25,6 +25,8 @@ sync_refresh_dags() {
         airflow dags reserialize
         echo "Sleeping..."
         sleep 10  # Sleep
+        airflow db reset --yes
+        sleep 10  # Sleep
         airflow db migrate
     done
 }
