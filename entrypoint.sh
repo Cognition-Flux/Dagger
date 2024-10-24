@@ -24,11 +24,12 @@ sync_refresh_dags() {
         echo "Reserializing DAGs..."
         airflow dags reserialize
         echo "Sleeping..."
-        sleep 120  # Sleep
+        sleep 10  # Sleep
+        airflow db migrate
     done
 }
 
-airflow db init
+airflow db migrate
 
 if ! airflow users list | grep -q "${AIRFLOW_USER_USERNAME:-admin}"; then
     airflow users create \
