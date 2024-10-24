@@ -16,6 +16,7 @@ USER airflow
 RUN python3 -m pip install pipx && \
     python3 -m pipx ensurepath && \
     pipx install poetry 
+RUN python3 -m pip install pydantic
 
 COPY pyproject.toml poetry.lock /opt/airflow/
 
