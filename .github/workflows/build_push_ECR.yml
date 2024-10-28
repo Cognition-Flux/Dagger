@@ -3,7 +3,7 @@ name: CI/CD Pipeline with Docker Compose
 on:
   push:
     branches:
-      - main
+      - ci/cd
 
 jobs:
   build-and-push:
