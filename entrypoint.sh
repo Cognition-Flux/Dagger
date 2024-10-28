@@ -21,12 +21,11 @@ sync_refresh_dags() {
     while true; do
         echo "Syncing DAGs from S3..."
         aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
-        sleep 10  
-        echo "Reserializing DAGs..."
-        airflow dags reserialize
+        echo "Restarting Airflow scheduler..."
+        pkill -f "airflow scheduler"  # Kill the existing scheduler
+        airflow scheduler &            # Restart the scheduler
         echo "Sleeping..."
-        sleep 10  
-        #airflow db migrate
+        sleep 120
     done
 }
 
@@ -52,6 +51,8 @@ else
     --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
 fi
 
+export AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL=30
+export AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL=15
 
 sync_refresh_dags &
 
