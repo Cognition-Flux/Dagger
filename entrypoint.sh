@@ -54,7 +54,7 @@ fi
 export AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL=30
 export AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL=15
 
-sync_refresh_dags &
+#sync_refresh_dags &
 
 airflow scheduler &
 
