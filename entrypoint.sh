@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+#
 set -e
 
 configure_aws_and_conn() {
