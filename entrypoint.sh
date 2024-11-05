@@ -20,7 +20,7 @@ configure_aws_and_conn() {
 sync_refresh_dags() {
     while true; do
         echo "Syncing DAGs from S3..."
-        aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags
+        aws s3 sync s3://etl-airflow-alejandro/dags ${AIRFLOW_HOME}/dags --delete
         sleep 5
     done
 }
