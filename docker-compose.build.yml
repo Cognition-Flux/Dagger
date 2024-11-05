@@ -3,4 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
     image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/airflow-image:latest
