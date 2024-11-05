@@ -3,7 +3,4 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: airflow
     image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/airflow-image:latest
-    ports:
-      - "8080:8080"

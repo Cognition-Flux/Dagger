@@ -27,40 +27,22 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v6
+      - name: Build and Push Docker Image using Docker Compose
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          # Build the image using docker compose
+          docker compose -f docker-compose.build.yml build airflow
 
-        with:
-          context: .
-          file: docker-compose.build.yml
-          target: airflow
-          push: true
-          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/airflow-image:latest
-          secrets: |
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          build-args: |
-            AIRFLOW__CORE__LOAD_EXAMPLES=False
-            AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
-            AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
-            AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
-            AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL=5
-            AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL=5
-            AIRFLOW__CORE__MIN_SERIALIZED_DAG_UPDATE_INTERVAL=10
-            AIRFLOW__CORE__MIN_SERIALIZED_DAG_FETCH_INTERVAL=10
-            AIRFLOW_USER_USERNAME=admin
-            AIRFLOW_USER_PASSWORD=admin
-            AIRFLOW_USER_EMAIL=admin@example.com
-            AIRFLOW_USER_FIRSTNAME=Admin
-            AIRFLOW_USER_LASTNAME=User
-            AIRFLOW_USER_ROLE=Admin
+          # Tag the image
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/airflow-image:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/airflow-image:latest
 
-
+          # Push the image to ECR
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/airflow-image:latest
 
       - name: Verify Image in ECR
         run: |
