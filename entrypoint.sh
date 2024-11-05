@@ -39,13 +39,14 @@ fi
 
 airflow connections delete 'aws_default' || true
 
-if [ "${RUNNING_IN_AWS_ECS,,}" = "false" ]; then
-    configure_aws_and_conn
-else
-    airflow connections add 'aws_default' \
-    --conn-type 'aws' \
-    --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
-fi
+# if [ "${RUNNING_IN_AWS_ECS,,}" = "false" ]; then
+#     configure_aws_and_conn
+# else
+#     airflow connections add 'aws_default' \
+#     --conn-type 'aws' \
+#     --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
+# fi
+configure_aws_and_conn
 
 sync_refresh_dags &
 
