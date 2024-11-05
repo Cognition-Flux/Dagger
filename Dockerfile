@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y curl unzip && \
     rm -rf aws awscliv2.zip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
 USER airflow
 
 RUN python3 -m pip install pipx && \
