@@ -40,7 +40,7 @@ def generate_dataframe():
         {
             "random_chars": [
                 "".join(random.choices(string.ascii_letters + string.digits, k=10))
-                for _ in range(1000)
+                for _ in range(100)
             ]
         }
     )
