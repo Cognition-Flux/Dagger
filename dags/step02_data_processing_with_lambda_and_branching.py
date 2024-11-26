@@ -9,6 +9,7 @@ import json
 import boto3
 from airflow.utils.trigger_rule import TriggerRule
 import random  # Import random module
+import os
 
 #######################
 # AWS and S3 configurations
@@ -39,6 +40,26 @@ default_args = {
     "retry_delay": timedelta(seconds=1),
 }
 
+
+class Notification:
+    """Class to handle notifications by writing messages to a text file."""
+
+    def __init__(self, filename="notification.txt"):
+        # Determine Airflow's home directory
+        airflow_home = os.getenv("AIRFLOW_HOME", "/usr/local/airflow")
+        # Set the full path for the notification file
+        self.filepath = os.path.join(airflow_home, filename)
+
+    def send(self, message):
+        """Write the notification message to the file."""
+        try:
+            with open(self.filepath, "a") as file:
+                file.write(f"{datetime.now()}: {message}\n")
+            print(f"Notification written to {self.filepath}")
+        except Exception as e:
+            print(f"Failed to write notification: {e}")
+
+
 with DAG(
     dag_id="step02_data_processing",
     default_args=default_args,
@@ -59,7 +80,7 @@ with DAG(
         """Download data from S3 and perform sanity checks."""
 
         # Test variable to trigger notification with probability 0.4
-        test_failure(0.4)
+        test_failure(0.5)
 
         s3_hook = S3Hook(aws_conn_id=AWS_CONN_ID)
         data_json = s3_hook.read_key(
@@ -87,7 +108,7 @@ with DAG(
         """Invoke AWS Lambda function to transform data."""
 
         # Test variable to trigger notification with probability 0.4
-        test_failure(0.4)
+        test_failure(0.5)
 
         try:
             lambda_client = boto3.client(
@@ -122,7 +143,7 @@ with DAG(
         """Upload transformed data to S3 and emit dataset event."""
 
         # Test variable to trigger notification with probability 0.4
-        test_failure(0.4)
+        test_failure(0.5)
 
         # Check if data is empty or an empty dictionary
         if not data or (isinstance(data, dict) and len(data) == 0):
@@ -144,7 +165,9 @@ with DAG(
     @task(trigger_rule=TriggerRule.ONE_FAILED)
     def send_notification():
         """Send notification if any upstream task fails."""
-        print("A failure has occurred in the pipeline. Sending notification.")
+        notification = Notification()
+        message = "A failure has occurred in the pipeline."
+        notification.send(message)
 
     # Define task dependencies
     download_and_check_data_task = download_and_check_data()
@@ -154,7 +177,6 @@ with DAG(
     # Notification task dependencies
     send_notification_task = send_notification()
     send_notification_task << [
-        download_and_check_data_task,
         upload_transformed_data_task,
     ]
 
