@@ -205,7 +205,6 @@ services:
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
-    # yamllint disable rule:line-length
     command:
       - -c
       - |
@@ -253,15 +252,37 @@ services:
         fi
         mkdir -p /sources/logs /sources/dags /sources/plugins
         chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
-        exec /entrypoint airflow version
-    # yamllint enable rule:line-length
+        # Initialize the database
+        airflow db upgrade
+        # Create admin user
+        if [[ "${_AIRFLOW_WWW_USER_CREATE}" == "true" ]]; then
+          airflow users create \
+            --username "${_AIRFLOW_WWW_USER_USERNAME}" \
+            --password "${_AIRFLOW_WWW_USER_PASSWORD}" \
+            --firstname "Airflow" \
+            --lastname "Admin" \
+            --role "Admin" \
+            --email "airflow@example.com"
+        fi
+        # Delete existing 'aws_default' connection (ignore errors)
+        airflow connections delete 'aws_default' || true
+        # Add new 'aws_default' connection
+        airflow connections add 'aws_default' \
+          --conn-type 'aws' \
+          --conn-login "${AWS_ACCESS_KEY_ID:-xxx}" \
+          --conn-password "${AWS_SECRET_ACCESS_KEY:-xxx}" \
+          --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
+        echo "Initialization complete."
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_MIGRATE: 'true'
       _AIRFLOW_WWW_USER_CREATE: 'true'
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
-      _PIP_ADDITIONAL_REQUIREMENTS: ''
+      # Add your AWS credentials here
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
