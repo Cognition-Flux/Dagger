@@ -22,7 +22,7 @@
 #                                Valor predeterminado: apache/airflow:2.10.3
 # AIRFLOW_UID                  - ID de usuario en los contenedores de Airflow.
 #                                Valor predeterminado: 50000
-# AIRFLOW_PROJ_DIR             - Ruta base a la que se montarán todos los archivos.
+# AIRFLOW_PROJ_DIR             - Ruta base a la que se montarán todos los archivos. es is nuevo previamente hacer mkdir -p ./dags ./logs ./plugins ./config
 #                                Valor predeterminado: .
 # Estas configuraciones son útiles principalmente en casos de pruebas individuales o ejecución de Airflow en modo de prueba.
 #
