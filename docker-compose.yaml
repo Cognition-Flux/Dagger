@@ -252,9 +252,9 @@ services:
           --conn-password '${AWS_SECRET_ACCESS_KEY:-xxx}' \
           --conn-extra "{\"region_name\": \"${AWS_DEFAULT_REGION:-us-east-1}\"}"
 
-        airflow pools set extract_pool 5 "pool para tareas de extracción"
-        airflow pools set transform_pool 5 "pool para tareas de transformación"
-        airflow pools set load_pool 5 "pool para tareas de carga"
+        airflow pools set extract_pool 8 "pool para tareas de extracción"
+        airflow pools set transform_pool 8 "pool para tareas de transformación"
+        airflow pools set load_pool 8 "pool para tareas de carga"
 
         exec /entrypoint airflow version
     # yamllint enable rule:line-length
