@@ -2,6 +2,17 @@
 # Este docker-compose.yaml configura un entorno distribuido de Airflow,
 # donde las tareas se ejecutan de forma asíncrona mediante CeleryExecutor,
 # utilizando Redis como backend de mensajes y PostgreSQL como base de datos.
+# Lista de servicios e imágenes creadas:
+# Servicios:
+# - **postgres** (imagen: postgres:13): Base de datos PostgreSQL utilizada por Airflow para almacenar metadatos y estados de tareas.
+# - **redis** (imagen: redis:7.2-bookworm): Servidor Redis que actúa como broker de mensajes para Celery.
+# - **airflow-webserver** (imagen: apache/airflow:2.10.3): Interfaz web de Airflow para monitorear y administrar DAGs y tareas.
+# - **airflow-scheduler** (imagen: apache/airflow:2.10.3): Planificador de Airflow que programa y desencadena tareas según los DAGs.
+# - **airflow-worker** (imagen: apache/airflow:2.10.3): Trabajadores de Celery que ejecutan las tareas asignadas por el planificador.
+# - **airflow-triggerer** (imagen: apache/airflow:2.10.3): Servicio que maneja disparadores asíncronos en Airflow.
+# - **airflow-init** (imagen: apache/airflow:2.10.3): Servicio de inicialización que configura Airflow antes de iniciar otros servicios.
+# - **airflow-cli** (imagen: apache/airflow:2.10.3): Herramienta de línea de comandos para interactuar con Airflow (perfil de depuración).
+# - **flower** (imagen: apache/airflow:2.10.3): Interfaz web para monitorear y administrar los trabajadores de Celery (opcional).
 
 #
 # Esta configuración admite una configuración básica utilizando variables de entorno o un archivo .env.
