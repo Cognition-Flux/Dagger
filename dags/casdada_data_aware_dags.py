@@ -166,6 +166,7 @@ def dynamic_process_pipeline():
     schedule=[collected_results_dataset],  # Se activa cuando el primer DAG completa
     catchup=False,
     tags=["ejemplo-data-aware"],
+    default_args=default_args,
 )
 def validate_and_upload_pipeline():
     """

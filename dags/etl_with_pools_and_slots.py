@@ -1,12 +1,10 @@
 # %%
-from airflow import DAG
-from airflow.decorators import task
+from airflow.decorators import task, dag
 from datetime import datetime, timedelta
 import time
 import logging
 import traceback
 from typing import List, Dict, Any
-import json
 
 # Configuración mejorada del sistema de logging
 logger = logging.getLogger(__name__)
@@ -29,14 +27,16 @@ default_args = {
     "email_on_retry": True,  # Enviar email en caso de reintento
 }
 
+
 # Definición del DAG con parámetros específicos para control de concurrencia
-with DAG(
+@dag(
     dag_id="etl_with_pools_and_slots",
     start_date=datetime(2024, 10, 1),
     schedule_interval="@daily",
     catchup=False,
     max_active_runs=10,  # Limita el número máximo de ejecuciones concurrentes del DAG
     default_args=default_args,
+    tags=["pools", "slots"],  # Etiquetas para organización
     doc_md="""
     # DAG ETL con Pools y Slots
     
@@ -53,8 +53,8 @@ with DAG(
     - transform_pool: Para tareas de transformación
     - load_pool: Para tareas de carga
     """,
-) as dag:
-
+)
+def etl_with_pools_and_slots():
     @task
     def generate_json_data() -> List[Dict[str, Any]]:
         """
@@ -215,3 +215,6 @@ with DAG(
             f"Error en configuración del pipeline: {str(e)}\nStack trace: {traceback.format_exc()}"
         )
         raise
+
+
+dag = etl_with_pools_and_slots()
