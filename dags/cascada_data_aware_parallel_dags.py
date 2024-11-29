@@ -34,6 +34,10 @@ default_args = {
     default_args=default_args,
 )
 def combined_pipeline():
+    """
+    doc
+    """
+
     @task
     def crear_1():
         logger.info("Generando primer conjunto de datos")
