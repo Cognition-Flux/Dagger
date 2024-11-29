@@ -69,6 +69,8 @@ x-airflow-common:
     AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 100
     AIRFLOW__CORE__MIN_SERIALIZED_DAG_UPDATE_INTERVAL: 10
     AIRFLOW__CORE__MIN_SERIALIZED_DAG_FETCH_INTERVAL: 10
+    AIRFLOW__CORE__DEFAULT_TIMEZONE: America/Santiago
+    AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: America/Santiago
     # yamllint disable rule:line-length
     # Utilice un servidor HTTP simple en el scheduler para comprobaciones de estado
     # Consulte https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/logging-monitoring/check-health.html#scheduler-health-check-server
