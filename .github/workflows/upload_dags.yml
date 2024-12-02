@@ -14,22 +14,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Clona todo el historial
+
+      - name: Install dependencies
+        run: pip install requests
 
       - name: Get list of modified files
         id: get_modified_files
         run: |
-          git fetch origin main
-          MODIFIED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.after }} ${{ github.event.before }} -- 'dags/**')
-          echo "::set-output name=files::$MODIFIED_FILES"
+          # Obtiene la lista de archivos modificados en el último commit
+          MODIFIED_FILES=$(git diff --name-only HEAD^ HEAD -- 'dags/**')
+          echo "Archivos modificados: $MODIFIED_FILES"
+          echo "files=$MODIFIED_FILES" >> $GITHUB_OUTPUT
 
       - name: Upload modified files
         if: steps.get_modified_files.outputs.files != ''
         run: |
-          echo "Modified files:"
-          echo "${{ steps.get_modified_files.outputs.files }}"
           for file in ${{ steps.get_modified_files.outputs.files }}; do
             echo "Uploading $file"
             python upload_script.py "$file"
           done
-      - name: Install dependencies
-        run: pip install requests
+
