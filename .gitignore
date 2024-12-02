@@ -5,3 +5,4 @@ plugins/
 config/
 tmp/
 **/__pycache__/
+*.pyc
