@@ -4,3 +4,4 @@ deprecated/
 plugins/
 config/
 tmp/
+**/__pycache__/
