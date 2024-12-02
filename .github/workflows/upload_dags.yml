@@ -1,0 +1,35 @@
+name: Upload Modified Dags
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dags/**'
+
+jobs:
+  upload_dags:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get list of modified files
+        id: get_modified_files
+        run: |
+          git fetch origin main
+          MODIFIED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.after }} ${{ github.event.before }} -- 'dags/**')
+          echo "::set-output name=files::$MODIFIED_FILES"
+
+      - name: Upload modified files
+        if: steps.get_modified_files.outputs.files != ''
+        run: |
+          echo "Modified files:"
+          echo "${{ steps.get_modified_files.outputs.files }}"
+          for file in ${{ steps.get_modified_files.outputs.files }}; do
+            echo "Uploading $file"
+            python upload_script.py "$file"
+          done
+      - name: Install dependencies
+        run: pip install requests
