@@ -6,6 +6,7 @@ import logging
 import traceback
 from typing import List, Dict, Any
 
+###################
 # Configuración mejorada del sistema de logging
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
