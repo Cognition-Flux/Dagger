@@ -11,7 +11,7 @@ RUN chmod +x /entrypoint.sh
 RUN chown -R airflow: ${AIRFLOW_HOME}
 #RUN chmod -R 777 /airflow-config/
 
-COPY ./single-image-version/dags ${AIRFLOW_HOME}/dags
+COPY ./dags ${AIRFLOW_HOME}/dags
 
 USER airflow
 
