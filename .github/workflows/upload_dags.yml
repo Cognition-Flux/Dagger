@@ -1,14 +1,17 @@
-name: Upload All Dags
+name: Upload Dags
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
     paths:
-      - 'dags/**/*.py'  # Solo archivos .py en la carpeta dags
+      - 'dags/**/*.py'
 
 jobs:
   upload_dags:
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
 
     steps:

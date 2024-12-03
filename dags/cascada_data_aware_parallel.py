@@ -34,7 +34,7 @@ default_args = {
     tags=["ejemplo-DAG-ramas"],
     default_args=default_args,
 )
-def combined_pipeline():
+def cascada_data_aware_parallel():
     """
     doc
     """
@@ -127,4 +127,4 @@ def combined_pipeline():
     subir(validated_data)
 
 
-dag = combined_pipeline()
+dag = cascada_data_aware_parallel()
