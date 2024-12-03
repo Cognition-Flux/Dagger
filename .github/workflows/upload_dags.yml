@@ -1,4 +1,4 @@
-name: Upload Modified Dags
+name: Upload All Dags
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'dags/**/*.py'  # Solo archivos .py en la carpeta dags
+
 jobs:
   upload_dags:
     runs-on: ubuntu-latest
@@ -13,25 +14,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Clona todo el historial
 
       - name: Install dependencies
         run: pip install requests
 
-      - name: Get list of modified files
-        id: get_modified_files
+      - name: Upload all .py files in dags folder
         run: |
-          # Obtiene la lista de archivos agregados, modificados o renombrados en el último commit
-          MODIFIED_FILES=$(git diff -M --name-only --diff-filter=AMR HEAD^ HEAD -- 'dags/**/*.py')
-          echo "Archivos modificados: $MODIFIED_FILES"
-          echo "files=$MODIFIED_FILES" >> $GITHUB_OUTPUT
-      
-      - name: Upload modified files
-        if: steps.get_modified_files.outputs.files != ''
-        run: |
-          for file in ${{ steps.get_modified_files.outputs.files }}; do
+          for file in $(find dags/ -name '*.py'); do
             echo "Uploading $file"
             python subirDAG.py "$file"
           done
-
