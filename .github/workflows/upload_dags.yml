@@ -22,11 +22,11 @@ jobs:
       - name: Get list of modified files
         id: get_modified_files
         run: |
-          # Obtiene la lista de archivos modificados en el último commit
-          MODIFIED_FILES=$(git diff --name-only HEAD^ HEAD -- 'dags/**/*.py')
+          # Obtiene la lista de archivos agregados, modificados o renombrados en el último commit
+          MODIFIED_FILES=$(git diff -M --name-only --diff-filter=AMR HEAD^ HEAD -- 'dags/**/*.py')
           echo "Archivos modificados: $MODIFIED_FILES"
           echo "files=$MODIFIED_FILES" >> $GITHUB_OUTPUT
-
+      
       - name: Upload modified files
         if: steps.get_modified_files.outputs.files != ''
         run: |
