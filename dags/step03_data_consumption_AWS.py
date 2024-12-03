@@ -36,7 +36,7 @@ AWS_SECRET_ACCESS_KEY = aws_conn.password  # Clave secreta AWS
 
 # Definición del DAG usando el decorador @dag
 @dag(
-    dag_id="step03_data_consumption_with_lambda",  # Identificador único del DAG
+    dag_id="step03_data_consumption_AWS",  # Identificador único del DAG
     default_args=default_args,  # Argumentos por defecto definidos anteriormente
     description="Consumes transformed data using AWS Lambda.",  # Descripción del propósito
     start_date=datetime(2024, 10, 1, 15, 30),  # Fecha de inicio del DAG

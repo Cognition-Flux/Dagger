@@ -61,7 +61,7 @@ class Notification:
 
 # Definición del DAG usando el decorador @dag
 @dag(
-    dag_id="step02_data_processing",  # ID único del DAG
+    dag_id="step02_data_processing_AWS",  # ID único del DAG
     default_args=default_args,  # Argumentos por defecto
     description="Processes data using AWS Lambda when new data is available.",  # Descripción
     start_date=datetime(2024, 10, 1, 15, 30),  # Fecha de inicio

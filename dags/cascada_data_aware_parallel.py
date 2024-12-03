@@ -26,7 +26,7 @@ default_args = {
 
 
 @dag(
-    dag_id="DAG_ramas",
+    dag_id="cascada_data_aware_parallel",
     start_date=datetime(2024, 10, 1, 15, 30),
     schedule_interval="@daily",
     catchup=False,
