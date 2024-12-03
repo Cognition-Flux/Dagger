@@ -18,6 +18,16 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
+      - name: Concatenate .md files into readme.md
+        run: |
+          rm -f readme.md
+          for file in $(find dags/ -name '*.md'); do
+            filename=$(basename "$file" .md)
+            echo "#$filename:" >> readme.md
+            cat "$file" >> readme.md
+            echo "" >> readme.md  # Añade una línea en blanco para separar
+          done
+
       - name: Upload all .py files in dags folder
         run: |
           for file in $(find dags/ -name '*.py'); do
