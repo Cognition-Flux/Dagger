@@ -3,7 +3,7 @@ import requests
 
 
 def upload_file(file_path):
-    # URL del endpoint (hardcodeado)
+    # URL del endpoint
     url = "https://4fruwh2zzb.execute-api.us-east-1.amazonaws.com/Prod/upload/"
 
     # Extraer el nombre del archivo de la ruta

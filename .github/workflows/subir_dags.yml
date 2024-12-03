@@ -1,0 +1,42 @@
+name: Subir DAGs actualizados
+
+# Se activa cuando se realiza un push en 'main'
+# y los cambios incluyen archivos .py dentro de la carpeta 'dags'
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dags/**/*.py'  # Solo archivos .py dentro de 'dags' y sus subdirectorios
+
+jobs:
+  upload_dags:
+    runs-on: ubuntu-latest  #
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3  #
+        with:
+          fetch-depth: 0  # Clona todo el historial de commits para poder comparar cambios
+
+      - name: Install dependencies
+        run: pip install requests  # Instala las dependencias necesarias para el script de subida
+
+      - name: Get list of modified .py files
+        id: get_modified_files  # Identificador para referenciar las salidas de este paso
+        run: |
+          # Obtiene la lista de archivos .py modificados o agregados en el último commit
+          MODIFIED_FILES=$(git diff --name-only HEAD^ HEAD -- 'dags/**/*.py')
+          echo "Archivos modificados: $MODIFIED_FILES"
+          # Exporta la lista de archivos modificados como una variable de salida
+          echo "files=$MODIFIED_FILES" >> $GITHUB_OUTPUT
+
+      - name: Upload modified .py files
+        # Solo ejecuta este paso si hay archivos modificados
+        if: steps.get_modified_files.outputs.files != ''
+        run: |
+          # Itera sobre cada archivo modificado y ejecuta el script de subida
+          for file in ${{ steps.get_modified_files.outputs.files }}; do
+            echo "Subiendo $file"
+            python subirDAG.py "$file"
+          done
