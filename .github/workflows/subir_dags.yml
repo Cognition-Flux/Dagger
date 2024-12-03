@@ -11,11 +11,11 @@ on:
 
 jobs:
   upload_dags:
-    runs-on: ubuntu-latest  #
+    runs-on: ubuntu-latest  # El trabajo se ejecuta en un runner con Ubuntu
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3  #
+        uses: actions/checkout@v3  # Acción para clonar el repositorio
         with:
           fetch-depth: 0  # Clona todo el historial de commits para poder comparar cambios
 
@@ -25,18 +25,31 @@ jobs:
       - name: Get list of modified .py files
         id: get_modified_files  # Identificador para referenciar las salidas de este paso
         run: |
-          # Obtiene la lista de archivos .py modificados o agregados en el último commit
-          MODIFIED_FILES=$(git diff --name-only HEAD^ HEAD -- 'dags/**/*.py')
-          echo "Archivos modificados: $MODIFIED_FILES"
-          # Exporta la lista de archivos modificados como una variable de salida
-          echo "files=$MODIFIED_FILES" >> $GITHUB_OUTPUT
+          # Obtiene la lista de archivos .py modificados o agregados en el último commit, excluyendo los borrados
+          MODIFIED_FILES=$(git diff --name-only --diff-filter=d HEAD^ HEAD -- 'dags/**/*.py')
+          # Obtiene la lista de archivos .py borrados en el último commit
+          DELETED_FILES=$(git diff --name-only --diff-filter=D HEAD^ HEAD -- 'dags/**/*.py')
+
+          echo "Archivos modificados o agregados: $MODIFIED_FILES"
+          echo "Archivos borrados: $DELETED_FILES"
+
+          # Exporta las listas de archivos como variables de salida
+          echo "modified_files=$MODIFIED_FILES" >> $GITHUB_OUTPUT
+          echo "deleted_files=$DELETED_FILES" >> $GITHUB_OUTPUT
+
+          # Si no hay archivos modificados pero hay archivos borrados
+          if [ -z "$MODIFIED_FILES" ] && [ -n "$DELETED_FILES" ]; then
+            echo "Se han borrado los siguientes archivos: $DELETED_FILES"
+            echo "No se subirá ningún archivo."
+            exit 0  # Termina el script sin errores
+          fi
 
       - name: Upload modified .py files
-        # Solo ejecuta este paso si hay archivos modificados
-        if: steps.get_modified_files.outputs.files != ''
+        # Solo ejecuta este paso si hay archivos modificados o agregados
+        if: steps.get_modified_files.outputs.modified_files != ''
         run: |
           # Itera sobre cada archivo modificado y ejecuta el script de subida
-          for file in ${{ steps.get_modified_files.outputs.files }}; do
+          for file in ${{ steps.get_modified_files.outputs.modified_files }}; do
             echo "Subiendo $file"
             python subirDAG.py "$file"
           done
