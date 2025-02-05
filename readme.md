@@ -1,5 +1,7 @@
 # Orquestación de flujos de datos en Apache Airflow con integración a Amazon Web Services (AWS)
 
+Este proyecto implementa una solución integral de orquestación de flujos de datos utilizando Apache Airflow y desplegado en contenedores mediante Docker Compose. La infraestructura permite gestionar y escalar pipelines ETL de forma eficiente, combinando la capacidad de Airflow para programar y supervisar tareas complejas con la portabilidad y facilidad de despliegue que ofrece Docker Compose. Además, la integración con Amazon Web Services (AWS) –aprovechando servicios como S3 para el almacenamiento y Lambda para el procesamiento de funciones– permite automatizar y robustecer la validación, transformación y carga de datos, proporcionando un entorno seguro y preparado para producción.
+
 ![DAG 1](images/1a.png) ![DAG 2](images/1b.png) ![DAG 3](images/1c.png)
 
 ## Iniciar el contenedor
