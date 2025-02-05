@@ -1,3 +1,38 @@
+# Orquestación de flujos de datos en Apache Airflow con integración a Amazon Web Services (AWS)
+
+![DAG 1](images/1a.png) ![DAG 2](images/1b.png) ![DAG 3](images/1c.png)
+
+## Iniciar el contenedor
+
+```bash
+#Las imágenes corren mediante un bash script
+chmod +x crear_iniciar_airflow_desde_compose.sh
+./crear_iniciar_airflow_desde_compose.sh
+```
+
+## Testear DAGs en el contenedor
+Para ejecutar comandos dentro del contenedor se dispone del script airflow.sh.  
+### Ejemplo: Testear el DAG 'etl_with_pools_and_slots':
+```bash
+#otorgamos permisos
+chmod +x airflow.sh
+#abrimos una terminal de bash en el contenedor
+./airflow.sh bash
+```
+Dentro del contenedor:
+```bash
+#Enlistamos todos los DAGs para verificar que está disponible
+airflow dags list
+#Testeamos
+airflow dags test etl_with_pools_and_slots 2024-01-01
+```
+También se puede testear cada tarea:
+```bash
+#Enlistamos las tareas
+airflow tasks list etl_with_pools_and_slots
+#Ejecutamos una tarea específica. El testeo tiene que ser consistente con las dependencias PARA COMENZAR A TESTEAR.
+airflow tasks test etl_with_pools_and_slots generate_json_data 2024-01-01
+```
 ## DAGs de ejemplo
 ### **Nombre**: `DAG_ramas`
 - **Programación**: Ejecución diaria (@daily)
@@ -287,7 +322,7 @@
 
 ## Convención básica del DAG
 
-### Cada DAG debe seguir estos patrones generales:
+### Cada DAG sigue estos patrones generales:
 
 ```python
 from airflow.datasets import Dataset  # 
@@ -356,27 +391,4 @@ def nombre_del_dag():
     tarea_2(resultado)
 # Instanciación del DAG
 dag_instance = nombre_del_dag()
-```
-## Testear DAGs en el contenedor
-Para ejecutar comandos dentro del contenedor se dispone del script airflow.sh.  
-### Ejemplo: Testear el DAG 'etl_with_pools_and_slots':
-```bash
-#otorgamos permisos
-chmod +x airflow.sh
-#abrimos una terminal de bash en el contenedor
-./airflow.sh bash
-```
-Dentro del contenedor:
-```bash
-#Enlistamos todos los DAGs para verificar que está disponible
-airflow dags list
-#Testeamos
-airflow dags test etl_with_pools_and_slots 2024-01-01
-```
-También se puede testear cada tarea:
-```bash
-#Enlistamos las tareas
-airflow tasks list etl_with_pools_and_slots
-#Ejecutamos una tarea específica. El testeo tiene que ser consistente con las dependencias PARA COMENZAR A TESTEAR.
-airflow tasks test etl_with_pools_and_slots generate_json_data 2024-01-01
 ```
